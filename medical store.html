@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JOYIA MEDICAL STORE</title>
+<style>
+/* ===== THEME ===== */
+:root{--blue:#0b6fd6;--dark:#0a3d7a;--green:#2fb67c;--lgreen:#e6f7ef;--grey:#f3f6fa;--text:#1e2a3a;--red:#d93a3a;--amber:#e69a12}
+*{box-sizing:border-box;margin:0;font-family:Segoe UI,Arial,sans-serif}
+body{background:var(--grey);color:var(--text)}
+header{background:#fff;box-shadow:0 2px 12px #0b6fd622;display:flex;align-items:center;gap:14px;padding:8px 18px;position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--dark);letter-spacing:1px}
+.brand small{display:block;font-size:10px;color:var(--green);letter-spacing:3px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a,.btn{background:none;border:0;padding:8px 14px;border-radius:8px;cursor:pointer;color:var(--dark);font-weight:600;text-decoration:none;transition:.2s}
+nav a:hover,nav a.on{background:var(--lgreen);color:var(--green)}
+.btn{background:var(--blue);color:#fff}.btn:hover{background:var(--dark);transform:translateY(-1px)}
+.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.s{padding:4px 9px;font-size:12px}
+main{max-width:1200px;margin:auto;padding:18px}
+.hero{background:linear-gradient(120deg,var(--dark),var(--blue) 60%,var(--green));color:#fff;border-radius:18px;padding:36px;margin-bottom:18px;animation:fade .6s}
+.hero h1{font-size:32px;margin-bottom:8px}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+input,select,textarea{padding:9px;border:1px solid #c9d6e6;border-radius:8px;width:100%;margin:4px 0}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.bar>*{flex:1;min-width:130px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 10px #0001;transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 20px #0b6fd633}
+.card svg{width:100%;height:110px;background:var(--lgreen);border-radius:10px}
+.price{color:var(--blue);font-weight:800}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;color:#fff;background:var(--green)}
+.tag.exp{background:var(--red)}.tag.n30{background:var(--amber)}.tag.n90{background:#8a6df0}.tag.low{background:#e6761a}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;font-size:13px}
+th{background:var(--dark);color:#fff;text-align:left}th,td{padding:8px;border-bottom:1px solid #e6edf5}
+.wrap{overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0}
+.stat{background:#fff;border-left:5px solid var(--blue);border-radius:10px;padding:12px}.stat b{font-size:22px;display:block}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:10;padding:10px}
+.modal.on{display:flex}.modal>div{background:#fff;border-radius:14px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.bars{display:flex;align-items:flex-end;gap:6px;height:120px;background:#fff;padding:10px;border-radius:10px}
+.bars i{flex:1;background:linear-gradient(var(--blue),var(--green));border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.note{font-size:12px;background:#fff8e1;padding:8px;border-radius:8px;margin:8px 0}
+#receipt{background:#fff;padding:16px;max-width:380px;margin:12px auto;font-family:Courier New,monospace;font-size:13px;border:1px dashed #888}
+#receipt *{font-family:inherit}#receipt .l{display:flex;justify-content:space-between}
+footer{text-align:center;padding:20px;color:#667;font-size:13px}
+@media print{body>*:not(#printArea){display:none!important}#printArea{display:block!important}#printArea #receipt{border:0;margin:0}}
+#printArea{display:none}
+</style></head><body>
+<header>
+ <div class="brand"><svg id="logo" width="64" height="44" viewBox="0 0 120 70"></svg><div>JOYIA MEDICAL STORE<small>PHARMACY & CARE</small></div></div>
+ <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<footer>© JOYIA MEDICAL STORE · Medicine information does not replace professional medical advice. Prototype uses localStorage; use a secure backend for real business.</footer>
+<div class="modal" id="modal"><div id="modalBody"></div></div>
+<div id="printArea"></div>
+
+<script>
+/* ===== LOGO: A + sand-timer Z + J ===== */
+document.getElementById('logo').innerHTML=`
+<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#0b6fd6"/><stop offset="1" stop-color="#2fb67c"/></linearGradient></defs>
+<rect x="1" y="1" width="118" height="68" rx="16" fill="#fff" stroke="url(#g)" stroke-width="3"/>
+<path d="M10 56 L24 14 L38 56 M16 40 H32" fill="none" stroke="#0a3d7a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<g><path d="M46 12 H74 M46 58 H74" stroke="#0a3d7a" stroke-width="6" stroke-linecap="round"/>
+<path d="M49 15 L71 15 L62 35 L71 55 L49 55 L58 35 Z" fill="#e6f7ef" stroke="url(#g)" stroke-width="3" stroke-linejoin="round"/>
+<path d="M54 18 H66 L60 30Z" fill="#2fb67c"/><path d="M52 54 L68 54 L60 42Z" fill="#0b6fd6"/><circle cx="60" cy="36" r="1.5" fill="#2fb67c"/></g>
+<path d="M104 12 V44 Q104 58 90 56 Q82 55 80 48" fill="none" stroke="#0a3d7a" stroke-width="7" stroke-linecap="round"/>
+<path d="M92 12 H108" stroke="#0a3d7a" stroke-width="7" stroke-linecap="round"/>`;
+
+/* ===== DATA LAYER (swap these for API calls later) ===== */
+const DB={get:(k,d)=>JSON.parse(localStorage.getItem('joyia_'+k)||'null')??d,set:(k,v)=>localStorage.setItem('joyia_'+k,JSON.stringify(v))};
+const CATS=['Tablets & Capsules','Syrups','Injections','Antibiotics','Vitamins & Supplements','Pain Relief','First Aid','Medical Equipment','Baby Care','Personal Care'];
+// [name, generic/formula, category, manufacturer, buy, sell, prescriptionOnly]
+const BASE=[['Panadol','Paracetamol 500mg','Pain Relief','GSK',12,18,0],['Brufen','Ibuprofen 400mg','Pain Relief','Abbott',20,30,0],['Disprin','Aspirin 300mg','Pain Relief','Reckitt',8,12,0],['Augmentin','Amoxicillin + Clavulanate','Antibiotics','GSK',150,210,1],['Amoxil','Amoxicillin 500mg','Antibiotics','GSK',60,90,1],['Zithromax','Azithromycin 500mg','Antibiotics','Pfizer',180,250,1],['Ciproxin','Ciprofloxacin 500mg','Antibiotics','Bayer',90,130,1],['Flagyl','Metronidazole 400mg','Antibiotics','Sanofi',30,45,1],['Calpol Syrup','Paracetamol 120mg/5ml','Syrups','GSK',70,100,0],['Gaviscon','Sodium Alginate','Syrups','Reckitt',160,220,0],['Ventolin Syrup','Salbutamol 2mg/5ml','Syrups','GSK',65,95,0],['Cetrizine','Cetirizine 10mg','Tablets & Capsules','Getz',15,25,0],['Risek','Omeprazole 20mg','Tablets & Capsules','Getz',110,150,0],['Glucophage','Metformin 500mg','Tablets & Capsules','Merck',40,60,1],['Norvasc','Amlodipine 5mg','Tablets & Capsules','Pfizer',70,100,1],['Voltral Inj','Diclofenac 75mg/3ml','Injections','Novartis',35,55,1],['Insulin Mixtard','Human Insulin 100IU','Injections','Novo Nordisk',900,1100,1],['Vitamin C','Ascorbic Acid 500mg','Vitamins & Supplements','Searle',90,130,0],['Centrum','Multivitamin','Vitamins & Supplements','Pfizer',700,950,0],['Calcium-D','Calcium + Vit D3','Vitamins & Supplements','Getz',180,250,0],['Bandage Roll','Cotton crepe 4in','First Aid','Local',30,50,0],['Dettol Antiseptic','Chloroxylenol','First Aid','Reckitt',120,170,0],['Digital Thermometer','Electronic','Medical Equipment','Omron',250,400,0],['BP Monitor','Digital arm cuff','Medical Equipment','Omron',3800,5200,0],['Glucose Meter','Test-strip meter','Medical Equipment','Accu-Chek',2500,3400,0],['Face Masks (50)','3-ply surgical','Personal Care','Local',150,250,0],['Hand Sanitizer','Ethanol 70%','Personal Care','Local',90,150,0],['Baby Diapers','Size M, 40 pcs','Baby Care','Pampers',900,1250,0],['Baby Lotion','Moisturising','Baby Care','Johnson',280,380,0],['Cerelac','Wheat + milk','Baby Care','Nestle',420,550,0]];
+const COL={'Pain Relief':'#e6761a','Antibiotics':'#d93a3a','Syrups':'#8a6df0','Tablets & Capsules':'#0b6fd6','Injections':'#0a3d7a','Vitamins & Supplements':'#e6b412','First Aid':'#2fb67c','Medical Equipment':'#556','Baby Care':'#ec7fb0','Personal Care':'#17a2b8'};
+
+function seed(){ // builds ~100 sample medicines (30 base x variants)
+ const meds=[];let id=1,today=Date.now();
+ for(let r=0;r<4;r++)BASE.forEach((b,i)=>{if(meds.length>=105)return;
+  const days=[-40,15,45,80,200,400,700][(i*3+r*5)%7]+r*9;
+  meds.push({id:id++,name:b[0]+(r?' '+['','Plus','Forte','Kids'][r]:''),brand:b[0],generic:b[1],cat:b[2],maker:b[3],buy:b[4]+r*3,sell:b[5]+r*4,
+   qty:[3,8,25,60,120,200][(i+r*2)%6],batch:'B'+(1000+id),mfg:iso(today-(400-days/2)*864e5),exp:iso(today+days*864e5),
+   desc:b[0]+' ('+b[1]+') from '+b[3]+'. Use only as directed.',rx:b[6],img:''});});
+ return meds;}
+const iso=t=>new Date(t).toISOString().slice(0,10);
+let meds=DB.get('meds',null)||seed(),cats=DB.get('cats',CATS),orders=DB.get('orders',[]),users=DB.get('users',[{u:'admin',p:'admin123',role:'admin',name:'Admin'}]),
+ cart=DB.get('cart',[]),me=DB.get('me',null),offers=DB.get('offers','Free delivery on orders above Rs. 2000!'),hist=DB.get('hist',[]);
+const save=()=>{DB.set('meds',meds);DB.set('cats',cats);DB.set('orders',orders);DB.set('users',users);DB.set('cart',cart);DB.set('me',me);DB.set('offers',offers);DB.set('hist',hist)};
+if(!DB.get('meds',null))save();
+
+/* ===== HELPERS ===== */
+const $=s=>document.querySelector(s),rs=n=>'Rs. '+Number(n).toLocaleString();
+const daysLeft=m=>Math.ceil((new Date(m.exp)-Date.now())/864e5);
+const expTag=m=>{const d=daysLeft(m);return d<0?'<span class="tag exp">Expired</span>':d<=30?'<span class="tag n30">≤30 days</span>':d<=60?'<span class="tag n30">≤60 days</span>':d<=90?'<span class="tag n90">≤90 days</span>':''};
+const lowTag=m=>m.qty<=10?'<span class="tag low">Low stock</span>':'';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function img(m){ // uploaded image or auto-drawn medicine picture by category
+ if(m.img)return `<img src="${m.img}" style="width:100%;height:110px;object-fit:cover;border-radius:10px">`;
+ const c=COL[m.cat]||'#0b6fd6',t=m.cat;let s;
+ if(t=='Syrups')s=`<rect x="75" y="30" width="50" height="62" rx="10" fill="${c}"/><rect x="88" y="16" width="24" height="16" rx="3" fill="#0a3d7a"/><rect x="82" y="50" width="36" height="24" fill="#fff" opacity=".85"/>`;
+ else if(t=='Injections')s=`<rect x="70" y="40" width="60" height="22" rx="4" fill="#fff" stroke="${c}" stroke-width="4"/><rect x="70" y="40" width="34" height="22" fill="${c}" opacity=".6"/><path d="M130 51 H165 M62 51 H48 M62 38 V64" stroke="${c}" stroke-width="4"/>`;
+ else if(t=='Medical Equipment')s=`<rect x="65" y="25" width="70" height="60" rx="10" fill="${c}"/><rect x="75" y="35" width="50" height="22" rx="4" fill="#cde8ff"/><circle cx="100" cy="72" r="6" fill="#2fb67c"/>`;
+ else if(t=='First Aid')s=`<rect x="65" y="28" width="70" height="56" rx="10" fill="#fff" stroke="${c}" stroke-width="4"/><path d="M100 40 V72 M84 56 H116" stroke="${c}" stroke-width="10"/>`;
+ else if(t=='Baby Care'||t=='Personal Care')s=`<rect x="80" y="30" width="40" height="58" rx="10" fill="${c}"/><rect x="90" y="16" width="20" height="16" rx="4" fill="#556"/><circle cx="100" cy="58" r="10" fill="#fff" opacity=".8"/>`;
+ else s=`<rect x="62" y="40" width="76" height="30" rx="15" fill="${c}"/><rect x="100" y="40" width="38" height="30" rx="15" fill="#fff" stroke="${c}" stroke-width="3"/><circle cx="50" cy="90" r="9" fill="${c}" opacity=".5"/><circle cx="150" cy="30" r="7" fill="${c}" opacity=".4"/>`;
+ return `<svg viewBox="0 0 200 110">${s}<text x="100" y="104" font-size="9" text-anchor="middle" fill="#0a3d7a">${esc(m.name)}</text></svg>`;}
+function modal(h){$('#modalBody').innerHTML=h;$('#modal').classList.add('on')}
+const closeM=()=>$('#modal').classList.remove('on');
+$('#modal').onclick=e=>{if(e.target.id=='modal')closeM()};
+const toast=t=>{const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;bottom:20px;right:20px;background:#0a3d7a;color:#fff;padding:10px 16px;border-radius:10px;z-index:99';document.body.append(d);setTimeout(()=>d.remove(),1800)};
+
+/* ===== ROUTER ===== */
+let page='home',arg=null;
+const go=(p,a)=>{page=p;arg=a;render();scrollTo(0,0)};
+function render(){
+ const adm=me&&me.role=='admin';
+ const links=[['home','Home'],['shop','Shop'],['cart','Cart ('+cart.reduce((s,c)=>s+c.q,0)+')'],['orders','My Orders'],['about','About'],['contact','Support']];
+ if(adm)links.push(['admin','Dashboard'],['inventory','Inventory'],['pos','Receipt / POS'],['reports','Reports'],['allorders','Orders']);
+ $('#nav').innerHTML=links.map(l=>`<a href="#" class="${page==l[0]?'on':''}" onclick="go('${l[0]}');return false">${l[1]}</a>`).join('')+(me?`<a href="#" onclick="logout();return false">Logout (${esc(me.name)})</a>`:`<a href="#" onclick="go('login');return false">Login</a>`);
+ const guard=['admin','inventory','pos','reports','allorders'];
+ if(guard.includes(page)&&!adm){page='login'}
+ $('#app').innerHTML=(views[page]||views.home)();
+ if(views[page+'_after'])views[page+'_after']();}
+function logout(){me=null;save();go('home')}
+
+/* ===== VIEWS ===== */
+const views={};
+const shopCard=m=>`<div class="card">${img(m)}<h4 style="margin-top:6px">${esc(m.name)}</h4><div style="font-size:12px;color:#667">${esc(m.generic)}</div>
+ <div style="margin:6px 0">${expTag(m)} ${lowTag(m)} ${m.rx?'<span class="tag" style="background:#6b3fa0">Rx only</span>':''}</div>
+ <div class="price">${rs(m.sell)}</div><div style="font-size:12px">In stock: ${m.qty}</div>
+ <div style="display:flex;gap:6px;margin-top:8px"><button class="btn s" onclick="detail(${m.id})">Details</button><button class="btn g s" onclick="addCart(${m.id})">Add to Cart</button></div></div>`;
+const sellable=m=>daysLeft(m)>=0&&m.qty>0;
+
+views.home=()=>{const rec=[...meds].sort((a,b)=>b.id-a.id).filter(sellable).slice(0,4),feat=meds.filter(sellable).filter((m,i)=>i%9==0).slice(0,4);
+ return `<div class="hero"><h1>Your Trusted Digital Pharmacy</h1><p>Search any medicine by name, brand or formula.</p>
+ <input id="hq" placeholder="Search medicine, formula, brand..." style="max-width:560px;margin-top:12px" oninput="liveSug(this.value)" onkeydown="if(event.key=='Enter')go('shop',this.value)"><div id="sug" style="background:#fff;color:#000;max-width:560px;border-radius:8px"></div></div>
+ <div class="note">🎁 Special Offer: ${esc(offers)}</div>
+ <h3>Popular Categories</h3><div class="bar">${cats.slice(0,8).map(c=>`<button class="btn" onclick="go('shop',null);setTimeout(()=>{$('#cat').value='${c}';filt()},0)">${c}</button>`).join('')}</div>
+ <h3>Featured</h3><div class="grid">${feat.map(shopCard).join('')}</div><h3 style="margin-top:16px">Recently Added</h3><div class="grid">${rec.map(shopCard).join('')}</div>
+ <h3 style="margin-top:16px">Why Choose Joyia?</h3><div class="stats"><div class="stat">✔ Genuine medicines<small>Verified batches</small></div><div class="stat">⏳ Expiry checked<small>No expired sales</small></div><div class="stat">🚚 Fast delivery<small>To your door</small></div><div class="stat">👨‍⚕️ Pharmacist verified<small>Rx orders</small></div></div>`};
+function liveSug(q){q=q.toLowerCase();$('#sug').innerHTML=q?meds.filter(m=>(m.name+m.generic).toLowerCase().includes(q)).slice(0,6).map(m=>`<div style="padding:7px;cursor:pointer" onclick="detail(${m.id})">${esc(m.name)} <small>${esc(m.generic)}</small></div>`).join(''):''}
+
+views.shop=()=>`<h2>Shop Medicines</h2><div class="bar"><input id="q" placeholder="Search name, brand, generic, formula, maker, category" oninput="filt()" value="${esc(arg||'')}">
+ <select id="cat" onchange="filt()"><option value="">All categories</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select>
+ <select id="srt" onchange="filt()"><option value="az">A → Z</option><option value="lo">Price low → high</option><option value="hi">Price high → low</option></select>
+ <button class="btn r" onclick="$('#q').value='';$('#cat').value='';filt()">Clear</button></div><div class="grid" id="list"></div>`;
+views.shop_after=()=>filt();
+function filt(){const q=$('#q').value.toLowerCase(),c=$('#cat').value,s=$('#srt').value;
+ let r=meds.filter(m=>sellable(m)&&(!c||m.cat==c)&&(m.name+m.brand+m.generic+m.maker+m.cat).toLowerCase().includes(q));
+ r.sort((a,b)=>s=='az'?a.name.localeCompare(b.name):s=='lo'?a.sell-b.sell:b.sell-a.sell);
+ $('#list').innerHTML=r.map(shopCard).join('')||'<p>No medicines found.</p>'}
+
+function detail(id){const m=meds.find(x=>x.id==id);modal(`<h3>${esc(m.name)}</h3>${img(m)}<p><b>Brand:</b> ${esc(m.brand)} · <b>Generic/Formula:</b> ${esc(m.generic)}</p>
+ <p><b>Maker:</b> ${esc(m.maker)} · <b>Category:</b> ${esc(m.cat)}</p><p><b>Price:</b> ${rs(m.sell)} · <b>Qty:</b> ${m.qty}</p><p><b>Expiry:</b> ${m.exp} ${expTag(m)}</p>
+ <p>${esc(m.desc)}</p><div class="note">⚠ Safety: read the label, keep away from children, do not exceed the dose. ${m.rx?'<b>Prescription required.</b>':''} This information does not replace professional medical advice.</div>
+ <button class="btn g" onclick="addCart(${m.id});closeM()">Add to Cart</button> <button class="btn r" onclick="closeM()">Close</button>`)}
+
+function addCart(id){const m=meds.find(x=>x.id==id);if(!sellable(m))return toast('Not available');
+ const c=cart.find(x=>x.id==id);if(c){if(c.q>=m.qty)return toast('Max stock reached');c.q++}else cart.push({id,q:1});save();render();toast('Added to cart')}
+const total=()=>cart.reduce((s,c)=>s+meds.find(m=>m.id==c.id).sell*c.q,0);
+views.cart=()=>{if(!cart.length)return '<h2>Cart</h2><p>Your cart is empty.</p>';
+ const rx=cart.some(c=>meds.find(m=>m.id==c.id).rx);
+ return `<h2>Shopping Cart</h2><div class="wrap"><table><tr><th>Item<th>Price<th>Qty<th>Subtotal<th></tr>${cart.map(c=>{const m=meds.find(x=>x.id==c.id);return `<tr><td>${esc(m.name)}<td>${rs(m.sell)}<td><button class="btn s" onclick="qty(${c.id},-1)">−</button> ${c.q} <button class="btn s" onclick="qty(${c.id},1)">+</button><td>${rs(m.sell*c.q)}<td><button class="btn r s" onclick="qty(${c.id},-99)">✕</button></tr>`}).join('')}</table></div>
+ <h3 style="margin:10px 0">Total: ${rs(total())}</h3><h3>Checkout</h3><div class="bar"><input id="cn" placeholder="Full name" value="${me?esc(me.name):''}"><input id="cp" placeholder="Phone (03xx-xxxxxxx)"><input id="ca" placeholder="Delivery address"></div>
+ ${rx?'<div class="note">Your cart has prescription-only medicine. Upload a prescription image; a pharmacist must verify it before the order is accepted.<input type="file" id="rxf" accept="image/*"></div>':''}
+ <button class="btn g" onclick="checkout(${rx})">Place Order</button>`};
+function qty(id,d){const c=cart.find(x=>x.id==id),m=meds.find(x=>x.id==id);c.q+=d;if(c.q>m.qty)c.q=m.qty;if(c.q<=0)cart=cart.filter(x=>x.id!=id);save();render()}
+function checkout(rx){if(!me)return toast('Please login first'),go('login');
+ const n=$('#cn').value.trim(),p=$('#cp').value.trim(),a=$('#ca').value.trim();
+ if(n.length<3||!/^[0-9+\- ]{10,15}$/.test(p)||a.length<6)return toast('Enter valid name, phone and address');
+ const make=rxImg=>{if(rx&&!rxImg)return toast('Prescription required');
+  const o={id:'ORD'+(1000+orders.length+1),user:me.u,name:n,phone:p,addr:a,date:new Date().toISOString(),status:rx?'Awaiting Pharmacist Verification':'Pending',rx:rxImg||'',
+   items:cart.map(c=>{const m=meds.find(x=>x.id==c.id);return {id:m.id,name:m.name,price:m.sell,q:c.q}}),total:total(),stocked:false};
+  orders.push(o);cart=[];save();toast('Order placed: '+o.id);go('orders')};
+ if(rx){const f=$('#rxf').files[0];if(!f)return toast('Upload prescription');const r=new FileReader();r.onload=()=>make(r.result);r.readAsDataURL(f)}else make()}
+
+const STAT=['Pending','Awaiting Pharmacist Verification','Confirmed','Shipped','Delivered','Cancelled'];
+views.orders=()=>{if(!me)return '<p>Please <a href="#" onclick="go(\'login\')">login</a>.</p>';
+ return `<h2>My Orders</h2>`+(orders.filter(o=>o.user==me.u).reverse().map(o=>`<div class="card" style="margin:8px 0"><b>${o.id}</b> · ${o.date.slice(0,10)} · <b>${o.status}</b> · ${rs(o.total)} <button class="btn s" onclick="receipt('${o.id}')">Print Receipt</button><br><small>${o.items.map(i=>i.name+' ×'+i.q).join(', ')}</small></div>`).join('')||'<p>No orders yet.</p>')};
+views.allorders=()=>`<h2>Manage Orders</h2><div class="wrap"><table><tr><th>ID<th>Customer<th>Total<th>Status<th>Actions</tr>${[...orders].reverse().map(o=>`<tr><td>${o.id}<td>${esc(o.name)}<br>${esc(o.phone)}<td>${rs(o.total)}<td><select onchange="setStatus('${o.id}',this.value)">${STAT.map(s=>`<option ${s==o.status?'selected':''}>${s}</option>`).join('')}</select>
+ <td>${o.rx?`<button class="btn s" onclick="modal('<img src=${o.rx} style=width:100%><br><button class=btn onclick=closeM()>Close</button>')">View Rx</button> `:''}<button class="btn s" onclick="receipt('${o.id}')">Receipt</button></tr>`).join('')}</table></div>`;
+function setStatus(id,s){const o=orders.find(x=>x.id==id);
+ if(s=='Awaiting Pharmacist Verification'||s=='Pending'){o.status=s;save();return}
+ if(s!='Cancelled'&&!o.stocked){ // deduct stock once, when order is first confirmed
+  for(const i of o.items){const m=meds.find(x=>x.id==i.id);if(m.qty<i.q)return toast('Not enough stock for '+m.name),render()}
+  o.items.forEach(i=>{const m=meds.find(x=>x.id==i.id);m.qty-=i.q;hist.push({date:new Date().toISOString(),med:m.name,change:-i.q,why:'Sale '+o.id})});o.stocked=true}
+ o.status=s;save();toast('Status updated')}
+
+/* ===== RECEIPT (used by orders and POS) ===== */
+function receipt(id){const o=orders.find(x=>x.id==id);showReceipt(o)}
+function showReceipt(o){const html=`<div id="receipt"><div style="text-align:center"><b style="font-size:16px">JOYIA MEDICAL STORE</b><br>AZJ · Pharmacy & Care<br>Tel: 0300-0000000<br>------------------------------</div>
+ <div>Receipt #: ${o.id}<br>Date: ${new Date(o.date).toLocaleString()}<br>Customer: ${esc(o.name||'Walk-in')}</div>------------------------------
+ ${o.items.map(i=>`<div class="l"><span>${esc(i.name)} x${i.q}</span><span>${(i.price*i.q).toLocaleString()}</span></div>`).join('')}------------------------------
+ <div class="l"><b>TOTAL</b><b>${rs(o.total)}</b></div>${o.paid?`<div class="l"><span>Paid</span><span>${rs(o.paid)}</span></div><div class="l"><span>Change</span><span>${rs(o.paid-o.total)}</span></div>`:''}
+ <div style="text-align:center;margin-top:8px">Thank you! Get well soon.<br><small>Medicines once sold are not returnable.</small></div></div>`;
+ $('#printArea').innerHTML=html;modal(html+'<div style="text-align:center"><button class="btn g" onclick="window.print()">🖨 Print</button> <button class="btn r" onclick="closeM()">Close</button></div>')}
+
+/* ===== POS: counter sale + print receipt ===== */
+let posCart=[];
+views.pos=()=>`<h2>Receipt / Counter Sale (POS)</h2><div class="bar"><input id="pq" placeholder="Search medicine to add" oninput="posSearch()"><input id="pc" placeholder="Customer name (optional)"><input id="pp" type="number" placeholder="Amount paid"></div>
+ <div id="pres" class="grid"></div><h3>Current sale</h3><div id="pcart"></div><button class="btn g" onclick="posSale()">Complete Sale & Print Receipt</button>`;
+views.pos_after=()=>posRender();
+function posSearch(){const q=$('#pq').value.toLowerCase();$('#pres').innerHTML=q?meds.filter(m=>sellable(m)&&(m.name+m.generic).toLowerCase().includes(q)).slice(0,6).map(m=>`<div class="card">${esc(m.name)}<br>${rs(m.sell)} (${m.qty})<br><button class="btn s" onclick="posAdd(${m.id})">Add</button></div>`).join(''):''}
+function posAdd(id){const m=meds.find(x=>x.id==id),c=posCart.find(x=>x.id==id);if(c){if(c.q<m.qty)c.q++}else posCart.push({id,q:1});posRender()}
+function posRender(){$('#pcart').innerHTML=posCart.length?`<table>${posCart.map(c=>{const m=meds.find(x=>x.id==c.id);return `<tr><td>${esc(m.name)}<td><input type="number" min="1" max="${m.qty}" value="${c.q}" style="width:70px" onchange="posQ(${c.id},this.value)"><td>${rs(m.sell*c.q)}<td><button class="btn r s" onclick="posCart=posCart.filter(x=>x.id!=${c.id});posRender()">✕</button></tr>`}).join('')}</table><h3>Total: ${rs(posCart.reduce((s,c)=>s+meds.find(m=>m.id==c.id).sell*c.q,0))}</h3>`:'<p>No items yet.</p>'}
+function posQ(id,v){const c=posCart.find(x=>x.id==id),m=meds.find(x=>x.id==id);c.q=Math.max(1,Math.min(m.qty,+v||1));posRender()}
+function posSale(){if(!posCart.length)return toast('Add items first');
+ const items=posCart.map(c=>{const m=meds.find(x=>x.id==c.id);return {id:m.id,name:m.name,price:m.sell,q:c.q}}),tot=items.reduce((s,i)=>s+i.price*i.q,0),paid=+$('#pp').value||0;
+ if(paid&&paid<tot)return toast('Paid amount is less than total');
+ const o={id:'POS'+(1000+orders.length+1),user:'pos',name:$('#pc').value.trim()||'Walk-in',phone:'',addr:'Counter',date:new Date().toISOString(),status:'Delivered',items,total:tot,paid,stocked:true};
+ items.forEach(i=>{const m=meds.find(x=>x.id==i.id);m.qty-=i.q;hist.push({date:o.date,med:m.name,change:-i.q,why:'Counter sale '+o.id})});
+ orders.push(o);posCart=[];save();showReceipt(o);render()}
+
+/* ===== ADMIN DASHBOARD + REPORTS ===== */
+const money=(f)=>orders.filter(f).reduce((s,o)=>s+o.total,0);
+const sold=o=>o.stocked&&o.status!='Cancelled';
+views.admin=()=>{const ex=meds.filter(m=>daysLeft(m)<0),near=meds.filter(m=>daysLeft(m)>=0&&daysLeft(m)<=90),low=meds.filter(m=>m.qty<=10);
+ return `<h2>Admin Dashboard</h2><div class="stats"><div class="stat">Medicines<b>${meds.length}</b></div><div class="stat">Total stock<b>${meds.reduce((s,m)=>s+m.qty,0)}</b></div><div class="stat">Inventory value<b>${rs(meds.reduce((s,m)=>s+m.qty*m.buy,0))}</b></div>
+ <div class="stat">Orders<b>${orders.length}</b></div><div class="stat">Completed<b>${orders.filter(o=>o.status=='Delivered').length}</b></div><div class="stat">Pending<b>${orders.filter(o=>/Pending|Awaiting/.test(o.status)).length}</b></div>
+ <div class="stat" style="border-color:var(--amber)">Low stock<b>${low.length}</b></div><div class="stat" style="border-color:var(--red)">Expired<b>${ex.length}</b></div><div class="stat" style="border-color:var(--amber)">Near expiry (90d)<b>${near.length}</b></div></div>
+ <h3>Special Offer text</h3><div class="bar"><input id="of" value="${esc(offers)}"><button class="btn" onclick="offers=$('#of').value;save();toast('Offer saved')">Save Offer</button></div>
+ <h3>Expiry notifications</h3>${[...ex,...near].sort((a,b)=>daysLeft(a)-daysLeft(b)).slice(0,8).map(m=>`<div class="note">${esc(m.name)} · ${m.exp} ${expTag(m)}</div>`).join('')||'<p>None 🎉</p>'}
+ <h3 style="margin-top:12px">Stock adjustment history</h3><div class="wrap"><table><tr><th>Date<th>Medicine<th>Change<th>Reason</tr>${[...hist].reverse().slice(0,15).map(h=>`<tr><td>${h.date.slice(0,10)}<td>${esc(h.med)}<td>${h.change}<td>${esc(h.why)}</tr>`).join('')}</table></div>
+ <h3 style="margin-top:12px">Data</h3><button class="btn" onclick="csv()">Export Inventory CSV</button> <button class="btn" onclick="backup()">Backup JSON</button> <button class="btn r" onclick="if(confirm('Reset all data?')){localStorage.clear();location.reload()}">Reset Demo Data</button>`};
+function download(n,t,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type}));a.download=n;a.click()}
+function csv(){const h=['name','brand','generic','cat','maker','buy','sell','qty','batch','mfg','exp'];download('inventory.csv',[h.join(',')].concat(meds.map(m=>h.map(k=>'"'+String(m[k]).replace(/"/g,'""')+'"').join(','))).join('\n'),'text/csv')}
+function backup(){download('joyia-backup.json',JSON.stringify({meds,cats,orders,hist}),'application/json')}
+views.reports=()=>{const d=n=>{const t=Date.now()-n*864e5;return money(o=>sold(o)&&new Date(o.date)>=t)},days=[...Array(7)].map((_,i)=>{const a=iso(Date.now()-(6-i)*864e5);return [a.slice(5),money(o=>sold(o)&&o.date.slice(0,10)==a)]}),mx=Math.max(1,...days.map(x=>x[1]));
+ return `<h2>Sales Reports</h2><div class="stats"><div class="stat">Daily<b>${rs(d(1))}</b></div><div class="stat">Weekly<b>${rs(d(7))}</b></div><div class="stat">Monthly<b>${rs(d(30))}</b></div></div><h3>Last 7 days</h3>
+ <div class="bars">${days.map(x=>`<i style="height:${x[1]/mx*100}%" title="${rs(x[1])}"></i>`).join('')}</div><div class="bars" style="height:auto;background:none;padding:2px">${days.map(x=>`<small style="flex:1;text-align:center">${x[0]}</small>`).join('')}</div>
+ <p class="note">Sales count when an order is confirmed or a counter sale is completed.</p>`};
+
+/* ===== INVENTORY (add / edit / delete, sorted by expiry) ===== */
+views.inventory=()=>`<h2>Inventory</h2><div class="bar"><input id="iq" placeholder="Search" oninput="invList()"><select id="ic" onchange="invList()"><option value="">All categories</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select>
+ <select id="ie" onchange="invList()"><option value="">Any expiry</option><option value="exp">Expired</option><option value="30">≤30 days</option><option value="60">≤60 days</option><option value="90">≤90 days</option></select>
+ <select id="is" onchange="invList()"><option value="">Any stock</option><option value="low">Low stock</option><option value="out">Out of stock</option></select></div>
+ <button class="btn g" onclick="medForm()">+ Add Medicine</button> <button class="btn" onclick="addCat()">+ Category</button><div class="wrap" style="margin-top:10px"><table id="itab"></table></div>`;
+views.inventory_after=()=>invList();
+function invList(){const q=$('#iq').value.toLowerCase(),c=$('#ic').value,e=$('#ie').value,s=$('#is').value;
+ const r=meds.filter(m=>(!c||m.cat==c)&&(m.name+m.brand+m.generic+m.maker).toLowerCase().includes(q)&&(!e||(e=='exp'?daysLeft(m)<0:daysLeft(m)>=0&&daysLeft(m)<=+e))&&(!s||(s=='low'?m.qty<=10:m.qty==0))).sort((a,b)=>new Date(a.exp)-new Date(b.exp));
+ $('#itab').innerHTML='<tr><th>Medicine<th>Category<th>Buy<th>Sell<th>Qty<th>Batch<th>Expiry<th>Actions</tr>'+r.map(m=>`<tr><td>${esc(m.name)}<br><small>${esc(m.generic)}</small><td>${esc(m.cat)}<td>${m.buy}<td>${m.sell}<td>${m.qty} ${lowTag(m)}<td>${esc(m.batch)}<td>${m.exp} ${expTag(m)}<td><button class="btn s" onclick="medForm(${m.id})">Edit</button> <button class="btn r s" onclick="delMed(${m.id})">Del</button></tr>`).join('')}
+function addCat(){const c=prompt('New category name');if(c&&c.trim()&&!cats.includes(c.trim())){cats.push(c.trim());save();render()}}
+function delMed(id){if(confirm('Delete this medicine?')){meds=meds.filter(m=>m.id!=id);save();invList()}}
+function medForm(id){const m=meds.find(x=>x.id==id)||{name:'',brand:'',generic:'',cat:cats[0],maker:'',buy:'',sell:'',qty:'',batch:'',mfg:iso(Date.now()),exp:'',desc:'',rx:0,img:''};
+ const f=(k,l,t='text')=>`<label>${l}<input id="f_${k}" type="${t}" value="${esc(m[k])}"></label>`;
+ modal(`<h3>${id?'Edit':'Add'} Medicine</h3>${f('name','Name')}${f('brand','Brand')}${f('generic','Generic / Formula')}${f('maker','Manufacturer')}
+ <label>Category<select id="f_cat">${cats.map(c=>`<option ${c==m.cat?'selected':''}>${c}</option>`).join('')}</select></label>${f('buy','Purchase price','number')}${f('sell','Selling price','number')}${f('qty','Quantity','number')}${f('batch','Batch no.')}${f('mfg','Mfg date','date')}${f('exp','Expiry date','date')}
+ <label>Description<textarea id="f_desc">${esc(m.desc)}</textarea></label><label><input type="checkbox" id="f_rx" style="width:auto" ${m.rx?'checked':''}> Prescription only</label><label>Image (optional)<input type="file" id="f_img" accept="image/*"></label>
+ <button class="btn g" onclick="saveMed(${id||0})">Save</button> <button class="btn r" onclick="closeM()">Cancel</button>`)}
+function saveMed(id){const g=k=>$('#f_'+k).value.trim(),o={name:g('name'),brand:g('brand'),generic:g('generic'),maker:g('maker'),cat:g('cat'),buy:+g('buy'),sell:+g('sell'),qty:Math.floor(+g('qty')),batch:g('batch'),mfg:g('mfg'),exp:g('exp'),desc:g('desc'),rx:$('#f_rx').checked?1:0};
+ if(!o.name||!o.generic||!o.exp||!(o.sell>0)||!(o.buy>=0)||!(o.qty>=0)||o.mfg>o.exp)return toast('Fill all fields correctly (price>0, qty≥0, expiry after mfg)');
+ const done=im=>{const old=meds.find(x=>x.id==id);if(old){if(old.qty!=o.qty)hist.push({date:new Date().toISOString(),med:o.name,change:o.qty-old.qty,why:'Manual adjustment'});Object.assign(old,o);if(im)old.img=im}
+  else{o.id=Math.max(0,...meds.map(x=>x.id))+1;o.img=im||'';meds.push(o);hist.push({date:new Date().toISOString(),med:o.name,change:o.qty,why:'New stock added'})}save();closeM();render();toast('Saved')};
+ const f=$('#f_img').files[0];if(f){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done('')}
+
+/* ===== LOGIN / REGISTER ===== */
+views.login=()=>`<h2>Login</h2><div class="card" style="max-width:380px"><input id="lu" placeholder="Username"><input id="lp" type="password" placeholder="Password"><button class="btn" onclick="login()">Login</button>
+ <p class="note">Demo admin: <b>admin</b> / <b>admin123</b> (change it!)</p></div><h3 style="margin-top:14px">Register (customer)</h3><div class="card" style="max-width:380px"><input id="rn" placeholder="Full name"><input id="ru" placeholder="Username"><input id="rp" type="password" placeholder="Password (6+ chars)"><button class="btn g" onclick="register()">Create Account</button></div>`;
+function login(){const u=users.find(x=>x.u==$('#lu').value.trim()&&x.p==$('#lp').value);if(!u)return toast('Wrong username or password');me=u;save();go(u.role=='admin'?'admin':'shop')}
+function register(){const n=$('#rn').value.trim(),u=$('#ru').value.trim(),p=$('#rp').value;if(n.length<3||u.length<3||p.length<6||users.some(x=>x.u==u))return toast('Invalid or duplicate details');
+ users.push({u,p,role:'customer',name:n});me=users[users.length-1];save();go('shop')}
+
+/* ===== STATIC PAGES ===== */
+views.about=()=>`<h2>About Us</h2><p>JOYIA MEDICAL STORE (AZJ) provides genuine medicines and healthcare products with careful expiry and stock control.</p><h3 style="margin-top:12px">Privacy Policy</h3><p>We use your name, phone and address only to process orders.</p><h3 style="margin-top:12px">Terms</h3><p>Prescription medicines are sold only after pharmacist verification. Expired medicines are never sold.</p>`;
+views.contact=()=>`<h2>Customer Support</h2><p>📞 0300-0000000 · ✉ support@joyia.example · 📍 Jauharabad</p><div class="card" style="max-width:420px;margin-top:10px"><input id="sn" placeholder="Your name"><textarea id="sm" placeholder="Message"></textarea><button class="btn" onclick="if($('#sn').value.trim().length>2&&$('#sm').value.trim().length>5){toast('Message sent');go('home')}else toast('Fill the form')">Send</button></div>`;
+
+render();
+</script></body></html>
